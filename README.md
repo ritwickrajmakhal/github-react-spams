@@ -2,6 +2,10 @@
 
 A Streamlit dashboard to analyze GitHub Pull Request reactions and detect potential spam accounts.
 
+
+https://github.com/user-attachments/assets/9e801c76-b90f-4de7-ad10-751cbecf0adf
+
+
 ## Setup
 
 1. **Install dependencies**
