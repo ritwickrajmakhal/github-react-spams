@@ -245,9 +245,6 @@ def main():
                 st.session_state.current_pr_url = ""
                 st.rerun()
     
-    # Check if we need to fetch new data
-    should_fetch = analyze_clicked and pr_url != st.session_state.current_pr_url
-    
     if analyze_clicked:
         if not pr_url:
             st.error("Please enter a GitHub PR URL")
@@ -264,25 +261,27 @@ def main():
             st.error("Invalid GitHub PR URL format. Please use: https://github.com/owner/repo/pull/123")
             return
         
-        # Only fetch if URL changed or no data exists
-        if should_fetch or st.session_state.reactions_data is None:
-            st.info(f"Analyzing PR #{pr_number} from {owner}/{repo}...")
-            
-            # Get reactions
-            with st.spinner("Fetching reactions and user profiles..."):
-                reactions, error = get_pr_reactions(owner, repo, pr_number)
-            
-            if error:
-                st.error(error)
-                return
-            
-            if not reactions:
-                st.warning("No reactions found for this PR")
-                return
-            
-            # Store in session state
-            st.session_state.reactions_data = reactions
-            st.session_state.current_pr_url = pr_url
+        # Always fetch when analyze button is clicked
+        st.info(f"Analyzing PR #{pr_number} from {owner}/{repo}...")
+        
+        # Get reactions
+        with st.spinner("Fetching reactions and user profiles..."):
+            reactions, error = get_pr_reactions(owner, repo, pr_number)
+        
+        if error:
+            st.error(error)
+            return
+        
+        if not reactions:
+            st.warning("No reactions found for this PR")
+            return
+        
+        # Store in session state
+        st.session_state.reactions_data = reactions
+        st.session_state.current_pr_url = pr_url
+        
+        # Force UI refresh to show new data
+        st.rerun()
     
     # Display results if we have data
     if st.session_state.reactions_data is not None:
